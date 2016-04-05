@@ -25,6 +25,8 @@ public:
 protected slots:
     void sendMessage(void);
     void showMessage(void);
+    void startConn(void);
+    void quitConn(void);
 
 private:
     Ui::MainWindow *ui;
