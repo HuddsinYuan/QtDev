@@ -8,14 +8,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->textShow->setText("aaa");
     counter = 0;
     qtimer = new QTimer(this);
-    qtimer->start(1000);
     client = new QTcpSocket(this);
 
     QRegExp regx("[a-zA-Z0-9]+$");
-
     QValidator *validator = new QRegExpValidator(regx, ui->textEdit );
     ui->textEdit->setValidator( validator );
 
@@ -29,6 +26,8 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+
 
 void MainWindow::sendMessage() {
     data =  ui->textEdit->text().trimmed();
@@ -57,10 +56,11 @@ void MainWindow::showMessage(){
             ui->textShow->append("failed");
         }
      }
+
 }
 
 void MainWindow::startConn(){
-    client->connectToHost(QHostAddress("127.0.0.1"), 21000);
+    client->connectToHost(QHostAddress("127.0.0.1"), 4200);
 }
 
 void MainWindow::quitConn(){

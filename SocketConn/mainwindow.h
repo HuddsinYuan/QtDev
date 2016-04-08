@@ -28,6 +28,9 @@ protected slots:
     void startConn(void);
     void quitConn(void);
 
+private slots:
+    void on_btnquit_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
