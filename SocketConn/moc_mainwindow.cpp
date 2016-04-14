@@ -30,17 +30,18 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      12,   11,   11,   11, 0x09,
-      26,   11,   11,   11, 0x09,
-      40,   11,   11,   11, 0x09,
-      52,   11,   11,   11, 0x09,
+      12,   11,   11,   11, 0x08,
+      34,   11,   11,   11, 0x08,
+      54,   11,   11,   11, 0x08,
+      68,   11,   11,   11, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_MainWindow[] = {
-    "MainWindow\0\0sendMessage()\0showMessage()\0"
-    "startConn()\0quitConn()\0"
+    "MainWindow\0\0on_btnLogin_clicked()\0"
+    "on_btnsay_clicked()\0OnConnected()\0"
+    "OnReadyRead()\0"
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -49,10 +50,10 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         Q_ASSERT(staticMetaObject.cast(_o));
         MainWindow *_t = static_cast<MainWindow *>(_o);
         switch (_id) {
-        case 0: _t->sendMessage(); break;
-        case 1: _t->showMessage(); break;
-        case 2: _t->startConn(); break;
-        case 3: _t->quitConn(); break;
+        case 0: _t->on_btnLogin_clicked(); break;
+        case 1: _t->on_btnsay_clicked(); break;
+        case 2: _t->OnConnected(); break;
+        case 3: _t->OnReadyRead(); break;
         default: ;
         }
     }

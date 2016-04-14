@@ -17,19 +17,15 @@ public:
     ~MainWindow();
 
     QTcpSocket *client;
-    QString data;
-    QTimer* qtimer;
-
     int counter;
 
-protected slots:
-    void sendMessage(void);
-    void showMessage(void);
-    void startConn(void);
-    void quitConn(void);
-
 private slots:
-    void on_btnquit_clicked();
+    void on_btnLogin_clicked();
+
+    void on_btnsay_clicked();
+
+    void OnConnected();
+    void OnReadyRead();
 
 private:
     Ui::MainWindow *ui;

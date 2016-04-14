@@ -8,18 +8,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    counter = 0;
-    qtimer = new QTimer(this);
+    ui->stackedWidget->setCurrentWidget(ui->Login);
     client = new QTcpSocket(this);
 
-    QRegExp regx("[a-zA-Z0-9]+$");
-    QValidator *validator = new QRegExpValidator(regx, ui->textEdit );
-    ui->textEdit->setValidator( validator );
-
-    connect(ui->btnsend,SIGNAL(clicked()),SLOT(sendMessage()));
-    connect(client, SIGNAL(readyRead()),SLOT(showMessage()));
-    connect(ui->btnconn, SIGNAL(clicked()), SLOT(startConn()));
-    connect(ui->btnquit, SIGNAL(clicked()), SLOT(quitConn()));
+    connect(client, SIGNAL(readyRead()),SLOT(OnReadyRead()));
+    connect(client, SIGNAL(connected()), SLOT(OnConnected()));
 }
 
 MainWindow::~MainWindow()
@@ -27,42 +20,56 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::OnConnected() {
 
-
-void MainWindow::sendMessage() {
-    data =  ui->textEdit->text().trimmed();
-    client->write(data.toUtf8());
-    ui->textEdit->clear();
-    ui->textEdit->setFocus();
+    ui->stackedWidget->setCurrentWidget(ui->chatpage);
+    QString username = ui->textName->text();
+    client->write(QString("/newuser:" + username + "\n").toUtf8());
 }
 
-void MainWindow::showMessage(){
-    QRegExp ReceivedParse("^(.*)Received.$");
-    QRegExp DataParse("^data,(.*)");
-    if(client->canReadLine()){
-        QString line = QString::fromUtf8(client->readLine()).trimmed();
-        if(ReceivedParse.indexIn(line) != -1) {
-            QString word = ReceivedParse.cap(1);
-            int length = word.length();
-            ui->textShow->append("you:" + word + " " + QString::number(length) + " words.");
-        }
-        else if(DataParse.indexIn(line)!= -1){
-            QStringList datas = DataParse.cap(1).split(',');
-            foreach(QString data, datas)
-                ui->textShow->append(data);
-            ui->textShow->append("end.");
-        }
-        else {
-            ui->textShow->append("failed");
-        }
-     }
+void MainWindow::OnReadyRead() {
+    QRegExp newuserexp("^/newusers:(.*)$");
+    QRegExp wordexp("^/(.*):(.*)$");
 
+    while(client->canReadLine()) {
+    QString message = QString::fromUtf8(client->readLine()).trimmed();
+
+    qDebug() << message ;
+
+    if(newuserexp.indexIn(message) != -1) {
+        QStringList users = newuserexp.cap(1).split(",");
+        ui->listWidget->clear();
+        foreach(QString user, users) {
+            qDebug() << user;
+            new QListWidgetItem(QPixmap(":/user.png") , user, ui->listWidget);
+        }
+    }
+    else if(wordexp.indexIn(message) != -1) {
+        QString user = wordexp.cap(1);
+        QString message = wordexp.cap(2);
+        ui->chatroom->append("<b>" + user + "</b>:" + message);
+
+        qDebug() << "User: " + user;
+        qDebug() << "Mesg: " + message;
+    }
+    }
 }
 
-void MainWindow::startConn(){
-    client->connectToHost(QHostAddress("127.0.0.1"), 4200);
+void MainWindow::on_btnLogin_clicked()
+{
+    QString ipaddr = ui->textHost->text();
+    qDebug() << "Serve: " << ipaddr ;
+    client->connectToHost(ipaddr, 4400);
 }
 
-void MainWindow::quitConn(){
-    client->write("exit");
+void MainWindow::on_btnsay_clicked()
+{
+    QString line = ui->textsay->text().trimmed();
+
+    if(!line.isEmpty()) {
+        client->write(QString("/message:" + line + "\n").toUtf8());
+    }
+
+    ui->textsay->clear();
+    ui->textsay->setFocus();
 }
